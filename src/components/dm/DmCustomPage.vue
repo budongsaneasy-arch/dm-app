@@ -1,26 +1,34 @@
 <!-- DmCustomPage.vue — 가변형 템플릿의 A4 한 장 (표시 전용)
      office(공통 사무소 정보) + model(블록 데이터) 만 받아 그립니다.
+
+     헤더·주소보정 스트립은 기본 템플릿과 같은 공용 클래스(.hdr .strip)를 그대로 씁니다.
      값은 전부 템플릿 보간({{ }})으로만 출력합니다. v-html 을 쓰지 않으므로
      사용자가 무엇을 입력해도 마크업으로 해석되지 않습니다. -->
 <template>
   <div class="a4">
     <div class="cstm">
-      <!-- 상단 브랜드 바 -->
-      <div class="cstm-head">
-        <div class="cstm-head-top">
+      <!-- 상단 헤더 — 네이비 그라데이션 + 골드 하단 보더 (기본 템플릿과 동일) -->
+      <div class="hdr cstm-hdr">
+        <div class="cstm-brand">
           <div class="cstm-logo">
             <img v-if="model.logo" :src="model.logo" alt="사무소 로고">
-            <span v-else class="ph">로고</span>
+            <span v-else class="ph">LOGO</span>
           </div>
-          <div class="cstm-bizname">{{ office.bizName }}{{ office.bizType ? ' ' + office.bizType : '' }}</div>
+          <div>
+            <div class="bn">{{ office.bizName }}</div>
+            <div class="bt">{{ office.bizType }}</div>
+          </div>
         </div>
-        <div class="cstm-regno">개설등록번호 {{ office.regNo }}</div>
+        <div class="cstm-hdr-right">
+          <div class="iss">{{ office.repTitle }} {{ office.repName }}</div>
+          <div class="reg">개설등록번호 {{ office.regNo }}</div>
+        </div>
       </div>
 
       <!-- 주소보정 안내 띠 -->
-      <div v-if="model.showAddrNote" class="cstm-strip">
-        <span class="cstm-pill">주소보정</span>
-        <span class="cstm-strip-tx">{{ office.addrNote }}</span>
+      <div v-if="model.showAddrNote" class="strip">
+        <span class="tag">주소보정</span>
+        <span class="tx">{{ office.addrNote }}</span>
       </div>
 
       <!-- 본문 -->
@@ -36,13 +44,16 @@
           <!-- 강조 리스트 -->
           <div v-else-if="blk.type === 'highlight'" class="cstm-blk cstm-hl" :class="styleClass(blk)">
             <div v-for="(it, i) in blk.items" :key="i" class="cstm-hl-item">
-              <b>{{ it.label }}</b><template v-if="it.label && it.text">: </template>{{ it.text }}
+              <span class="sq"></span>
+              <span><b>{{ it.label }}</b><template v-if="it.label && it.text">: </template>{{ it.text }}</span>
             </div>
           </div>
 
           <!-- 매물 요약 박스 -->
           <div v-else-if="blk.type === 'listing'" class="cstm-blk cstm-box" :class="styleClass(blk)">
-            <div class="cstm-box-title">{{ blk.title }}</div>
+            <div class="cstm-box-head">
+              <span class="sq"></span><span class="t">{{ blk.title }}</span>
+            </div>
             <div class="cstm-rows">
               <div v-for="(r, i) in blk.rows" :key="i" class="cstm-row">
                 <span class="lb">{{ r.label }}</span><span class="vl">{{ r.value }}</span>
@@ -52,20 +63,29 @@
 
           <!-- 시장 동향 박스 -->
           <div v-else-if="blk.type === 'market'" class="cstm-blk cstm-trend" :class="styleClass(blk)">
-            <div class="cstm-trend-title">{{ blk.title }}</div>
+            <div class="cstm-trend-head">
+              <span class="sq"></span><span class="t">{{ blk.title }}</span>
+            </div>
             <div class="cstm-trend-tx">{{ blk.text }}</div>
           </div>
 
           <!-- 서명 · 연락처 -->
           <div v-else-if="blk.type === 'signature'" class="cstm-blk cstm-sig" :class="styleClass(blk)">
             <div class="cstm-sig-date">{{ blk.date }}</div>
-            <div v-for="(ln, i) in blk.lines" :key="i" class="cstm-sig-line">{{ ln }}</div>
+            <div
+              v-for="(ln, i) in blk.lines"
+              :key="i"
+              class="cstm-sig-line"
+              :class="{ 'is-name': i === 0 }"
+            >{{ ln }}</div>
           </div>
         </template>
       </div>
 
-      <!-- 하단 바 -->
-      <div class="cstm-foot"></div>
+      <!-- 하단 마감 바 -->
+      <div class="cstm-foot">
+        <span class="mark">{{ office.bizName }}</span>
+      </div>
 
       <!-- A4 초과 경고 (화면에만, 인쇄물에는 안 나옵니다) -->
       <div v-if="overflow" class="cstm-over">
