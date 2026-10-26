@@ -59,6 +59,7 @@ src/
     README.md            컴포넌트 상세 문서
 docs/
   querystring-prefill.md 본 서비스(bdseasy.com) 연동 사양
+  security-review.md     연동 방식 보안 점검 결과
 ```
 
 ## PDF / 인쇄
@@ -101,6 +102,8 @@ https://dmapp.bdseasy.com/?bizName=...&regNo=...&repName=...&phone1=...&phone2=.
 - `bizType`, `issue`, `repTitle`, 프로필 사진은 전달되지 않습니다 — 기존 기본값/저장값을 유지합니다
 
 사양 전문은 `docs/querystring-prefill.md` 에 있습니다.
+
+> **보안 검토 사항**: 현재 `?` 쿼리스트링 방식은 개인 휴대전화번호가 요청 URL 에 담겨 GitHub·Fastly 서버 로그에 남을 수 있습니다. `#` 프래그먼트로 바꾸면 해결됩니다. 자세한 내용은 [docs/security-review.md](docs/security-review.md) 참고.
 
 ## 광고 표시 관련 주의
 
