@@ -45,7 +45,10 @@
           <div v-else-if="blk.type === 'highlight'" class="cstm-blk cstm-hl" :class="styleClass(blk)">
             <div v-for="(it, i) in blk.items" :key="i" class="cstm-hl-item">
               <span class="sq"></span>
-              <span><b>{{ it.label }}</b><template v-if="it.label && it.text">: </template>{{ it.text }}</span>
+              <div class="tx">
+                <b v-if="it.label">{{ it.label }}</b>
+                <span v-if="it.text" class="desc">{{ it.text }}</span>
+              </div>
             </div>
           </div>
 

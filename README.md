@@ -70,6 +70,7 @@ src/
 docs/
   querystring-prefill.md 본 서비스(bdseasy.com) 연동 사양
   security-review.md     연동 방식 보안 점검 결과
+  route-request.md       개발팀 전달용 연동 요청문
 ```
 
 ## 템플릿

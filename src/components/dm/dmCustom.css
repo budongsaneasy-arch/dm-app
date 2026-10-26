@@ -73,8 +73,9 @@
 /* 본문 단락 — 기본 템플릿 인사말 본문과 같은 톤 */
 .dm .cstm-para { color: #3a4150; white-space: pre-wrap; }
 
-/* 강조 리스트 — 골드 사각형 불릿(.slabel .sq 와 같은 장치) */
-.dm .cstm-hl { display: flex; flex-direction: column; gap: 8px; }
+/* 강조 리스트 — 골드 사각형 불릿(.slabel .sq 와 같은 장치)
+   앞머리를 굵게 한 줄, 설명은 그 아랫줄에 둡니다. */
+.dm .cstm-hl { display: flex; flex-direction: column; gap: 12px; }
 .dm .cstm-hl-item { display: flex; gap: 10px; align-items: baseline; color: #41506a; }
 .dm .cstm-hl-item .sq {
   flex: none;
@@ -83,7 +84,9 @@
   background: var(--gold);
   transform: translateY(-1px);
 }
+.dm .cstm-hl-item .tx { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
 .dm .cstm-hl-item b { color: var(--navy); font-weight: 700; }
+.dm .cstm-hl-item .desc { color: #41506a; }
 
 /* 매물 요약 박스 — 기본 템플릿 정보카드(.info)와 같은 틀 */
 .dm .cstm-box {
