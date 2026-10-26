@@ -54,6 +54,7 @@ src/
     DmBackPage.vue       뒷면 A4 (정보 3종·이웃 사례·연락처)
     VField.vue           글자수 카운터 입력 필드
     dmModel.js           sampleData() + 항목별 글자수 제한 LIMITS
+    queryPrefill.js      본 서비스에서 넘어온 사무소 정보 프리필
     dmPages.css          앞·뒤 공용 스타일 + 인쇄(@page A4) 규칙
     README.md            컴포넌트 상세 문서
 docs/
@@ -74,9 +75,32 @@ docs/
 
 **이 저장소는 공개(public) 입니다.** `dmModel.js` 의 `sampleData()` 는 전부 가상의 예시값(`예시부동산`, `홍길동`, `02-0000-0000`, `OO아파트` 등)이며, 실제 사무소 정보나 실거래가가 아닙니다. 실제 고객·사무소 정보를 `sampleData()` 에 넣어 커밋하지 마세요.
 
-## 아직 안 된 것
+## 본 서비스 연동 (쿼리스트링 프리필)
 
-`docs/querystring-prefill.md` 의 **쿼리스트링 프리필이 미구현** 입니다. 본 서비스 헤더 메뉴에서 넘겨주는 `bizName`, `regNo`, `repName`, `phone1`, `phone2`, `address` 6개를 `mounted()` 에서 읽어 모델에 덮어쓰는 작업이 남아 있습니다.
+본 서비스 `bdseasy.com` 의 **마케팅 > DM 템플릿** 메뉴가 이 앱을 새 탭으로 열 때, 로그인한 중개사의 사무소 정보를 URL 로 넘겨줍니다. 앱은 그 값으로 입력 폼 6칸을 미리 채웁니다. 중개사가 DM 만들 때마다 사무소 정보를 다시 입력하지 않게 하는 것이 목적입니다.
+
+```
+https://dmapp.bdseasy.com/?bizName=...&regNo=...&repName=...&phone1=...&phone2=...&address=...
+```
+
+| 파라미터 | 모델 키 | 글자수 제한 |
+| --- | --- | --- |
+| `bizName` | `m.bizName` | `LIMITS.bizName` (20) |
+| `regNo` | `m.regNo` | `LIMITS.regNo` (22) |
+| `repName` | `m.repName` | `LIMITS.repName` (10) |
+| `phone1` | `m.phone1` | `LIMITS.phone` (20) |
+| `phone2` | `m.phone2` | `LIMITS.phone` (20) |
+| `address` | `m.address` | `LIMITS.address` (44) |
+
+구현은 `src/components/dm/queryPrefill.js` 에 있고 `DmGenerator.vue` 의 `mounted()` 에서 호출합니다.
+
+- 적용 순서: `sampleData()` → localStorage 복원 → **쿼리스트링 덮어쓰기** (URL 값이 저장값보다 우선)
+- 값이 빈 파라미터는 아예 오지 않으므로 **6개 중 일부만** 올 수 있습니다. 안 온 칸은 기존 값을 유지합니다
+- URL 값은 신뢰하지 않는 외부 입력으로 다룹니다 — `trim()` 후 `LIMITS` 제한으로 자르고, 위 6개 외의 파라미터는 무시합니다
+- 적용 후 `history.replaceState` 로 주소창의 쿼리를 지웁니다. 안 지우면 사용자가 값을 고친 뒤 새로고침할 때 URL 값으로 되돌아갑니다
+- `bizType`, `issue`, `repTitle`, 프로필 사진은 전달되지 않습니다 — 기존 기본값/저장값을 유지합니다
+
+사양 전문은 `docs/querystring-prefill.md` 에 있습니다.
 
 ## 광고 표시 관련 주의
 

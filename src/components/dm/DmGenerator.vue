@@ -179,6 +179,7 @@ import VField from './VField.vue';
 import DmFrontPage from './DmFrontPage.vue';
 import DmBackPage from './DmBackPage.vue';
 import { sampleData, LIMITS, BLANK_ROW } from './dmModel.js';
+import { applyQueryPrefill, clearQueryString } from './queryPrefill.js';
 
 const STORAGE_KEY = 'dm_model';
 
@@ -224,6 +225,9 @@ export default {
   },
   mounted() {
     try { const s = localStorage.getItem(STORAGE_KEY); if (s) this.m = Object.assign(sampleData(), JSON.parse(s)); } catch (e) {}
+    // 본 서비스에서 넘어온 사무소 정보로 덮어씁니다 (localStorage 저장값보다 우선).
+    // 적용 후 주소창의 쿼리를 지워, 새로고침 때 사용자가 고친 값이 되돌아가지 않게 합니다.
+    if (applyQueryPrefill(this.m).length) clearQueryString();
     this.fitScale();
     window.addEventListener('resize', this.fitScale);
   },
