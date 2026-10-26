@@ -1,0 +1,25 @@
+name: 부동산DM생성기 배포
+
+on:
+  push:
+    tags: ['deploy-*']
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 체크아웃
+        uses: actions/checkout@v7
+      - name: Pages 설정
+        uses: actions/configure-pages@v6
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: 공개하기
+        id: deployment
+        uses: actions/deploy-pages@v5
