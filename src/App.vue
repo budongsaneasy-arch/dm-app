@@ -1,12 +1,12 @@
 <template>
-  <DmGenerator />
+  <DmStudio />
 </template>
 
 <script>
-import DmGenerator from './components/dm/DmGenerator.vue';
+import DmStudio from './components/dm/DmStudio.vue';
 
 export default {
   name: 'App',
-  components: { DmGenerator },
+  components: { DmStudio },
 };
 </script>

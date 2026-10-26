@@ -1,0 +1,225 @@
+/* dmCustom.css — 가변형 템플릿(custom-v2) 전용 스타일
+   dmPages.css 의 .dm / .a4 규칙 위에 얹힙니다. 인쇄(@page A4, 툴바 숨김)는
+   dmPages.css 가 이미 처리하므로 여기서는 페이지 내부만 정의합니다.
+   DmCustomEditor.vue 에서 한 번만 import 하세요. */
+
+.dm .cstm {
+  /* 레퍼런스 양식의 색. 사무소 브랜드에 맞게 이 값만 바꾸면 전체에 반영됩니다. */
+  --c-head: #3b4a96; /*      상단 브랜드 바 (남색) */
+  --c-head-sub: #c9d2f0; /*  상단 바 안의 보조 텍스트 */
+  --c-strip: #dde3f7; /*     주소보정 안내 띠 배경 */
+  --c-pill: #f0a62e; /*      주소보정 배지 */
+  --c-pill-ink: #4a3208;
+  --c-foot: #1b2559; /*      하단 바 */
+  --c-accent: #15bc8f; /*    하단 삼각 포인트 */
+  --c-ink: #1e2430;
+  --c-ink-soft: #3d4654;
+
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: #fff;
+  color: var(--c-ink);
+  font-family: 'Noto Sans KR', sans-serif;
+}
+
+/* ---------- 상단 브랜드 바 ---------- */
+.dm .cstm-head {
+  background: var(--c-head);
+  color: #fff;
+  padding: 26px 40px 22px;
+  flex: 0 0 auto;
+}
+
+.dm .cstm-head-top {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.dm .cstm-logo {
+  width: 74px;
+  height: 74px;
+  flex: 0 0 auto;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+.dm .cstm-logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.dm .cstm-logo .ph {
+  font-size: 11px;
+  color: var(--c-head-sub);
+  letter-spacing: 0.04em;
+}
+
+.dm .cstm-bizname {
+  font-size: 31px;
+  font-weight: 900;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  word-break: keep-all;
+}
+
+.dm .cstm-regno {
+  margin-top: 18px;
+  text-align: right;
+  font-size: 19px;
+  font-weight: 500;
+  color: #eef1fb;
+  letter-spacing: -0.01em;
+}
+
+/* ---------- 주소보정 안내 띠 ---------- */
+.dm .cstm-strip {
+  background: var(--c-strip);
+  padding: 13px 40px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex: 0 0 auto;
+}
+
+.dm .cstm-pill {
+  flex: 0 0 auto;
+  background: var(--c-pill);
+  color: var(--c-pill-ink);
+  font-size: 11.5px;
+  font-weight: 700;
+  padding: 6px 13px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.dm .cstm-strip-tx {
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: #28304a;
+  word-break: keep-all;
+}
+
+/* ---------- 본문 ---------- */
+.dm .cstm-body {
+  flex: 1 1 auto;
+  padding: 30px 44px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  overflow: hidden; /* A4 밖으로 흘러도 인쇄물이 깨지지 않게 */
+}
+
+.dm .cstm-recipient {
+  font-size: 19px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin-bottom: 4px;
+  word-break: keep-all;
+}
+
+/* 블록 공통 — 크기/굵기/정렬 조절 */
+.dm .cstm-blk { word-break: keep-all; }
+.dm .cstm-blk.sz-sm { font-size: 12px; line-height: 1.72; }
+.dm .cstm-blk.sz-md { font-size: 13.5px; line-height: 1.78; }
+.dm .cstm-blk.sz-lg { font-size: 15.5px; line-height: 1.8; }
+.dm .cstm-blk.is-bold { font-weight: 700; }
+.dm .cstm-blk.al-left { text-align: left; }
+.dm .cstm-blk.al-center { text-align: center; }
+.dm .cstm-blk.al-right { text-align: right; }
+
+/* 본문 단락 — 빈 줄을 그대로 살립니다 */
+.dm .cstm-para { white-space: pre-wrap; color: var(--c-ink-soft); }
+
+/* 강조 리스트 */
+.dm .cstm-hl { display: flex; flex-direction: column; gap: 5px; }
+.dm .cstm-hl-item { color: var(--c-ink-soft); }
+.dm .cstm-hl-item b { color: var(--c-ink); font-weight: 700; }
+
+/* 매물 요약 박스 */
+.dm .cstm-box {
+  border: 1px solid #ccd3e8;
+  border-left: 4px solid var(--c-head);
+  border-radius: 4px;
+  padding: 14px 18px;
+  background: #f7f9ff;
+}
+.dm .cstm-box-title {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--c-head);
+  margin-bottom: 9px;
+  letter-spacing: -0.01em;
+}
+.dm .cstm-rows { display: grid; grid-template-columns: repeat(2, 1fr); gap: 7px 22px; }
+.dm .cstm-row { display: flex; gap: 10px; align-items: baseline; }
+.dm .cstm-row .lb {
+  flex: 0 0 62px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #6b7490;
+}
+.dm .cstm-row .vl { font-weight: 600; color: var(--c-ink); }
+
+/* 시장 동향 박스 */
+.dm .cstm-trend {
+  background: #eef2fc;
+  border-radius: 4px;
+  padding: 14px 18px;
+}
+.dm .cstm-trend-title {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--c-head);
+  margin-bottom: 7px;
+}
+.dm .cstm-trend-tx { color: var(--c-ink-soft); white-space: pre-wrap; }
+
+/* 서명 · 연락처 */
+.dm .cstm-sig { margin-top: auto; padding-top: 10px; }
+.dm .cstm-sig-date { margin-bottom: 10px; color: var(--c-ink-soft); }
+.dm .cstm-sig-line { color: var(--c-ink); line-height: 1.7; }
+
+/* ---------- 하단 바 + 삼각 포인트 ---------- */
+.dm .cstm-foot {
+  flex: 0 0 auto;
+  position: relative;
+  height: 74px;
+  background: var(--c-foot);
+}
+/* 오른쪽 아래 삼각형 — 레퍼런스 양식의 포인트 */
+.dm .cstm-foot::before {
+  content: '';
+  position: absolute;
+  right: 0;
+  bottom: 74px;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 0 0 86px 150px;
+  border-color: transparent transparent var(--c-accent) transparent;
+}
+
+/* ---------- A4 초과 경고 (화면 전용) ---------- */
+.dm .cstm-over {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(180, 35, 24, 0.94);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 9px 16px;
+  text-align: center;
+  letter-spacing: -0.01em;
+}
+
+@media print {
+  /* 경고 띠는 인쇄물에 나오면 안 됩니다 */
+  .dm .cstm-over { display: none !important; }
+}
