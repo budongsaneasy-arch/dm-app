@@ -116,6 +116,42 @@
 .dm .qr .box span{font-family:monospace;font-size:11px;color:#9AA3B2;}
 .dm .qr .ql{font-size:10.5px;color:#9FB2CE;margin-top:7px;}
 
+/* ----- 편집기 셸 (툴바 / 폼 / 미리보기) -----
+   DmStudio 가 툴바를, 템플릿별 편집기가 폼과 미리보기를 그립니다.
+   컴포넌트가 나뉘어 있어 scoped 스타일로는 한쪽에만 걸리므로 공용 CSS 에 둡니다. */
+.dm{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:#e7e5df;}
+
+/* 툴바 — 왼쪽에 제목과 템플릿 탭, 오른쪽에 동작 버튼 */
+.dm .toolbar{position:sticky;top:0;z-index:30;display:flex;align-items:center;justify-content:space-between;gap:16px;background:var(--navy);color:#fff;padding:12px 22px;box-shadow:0 2px 12px rgba(0,0,0,.18);}
+.dm .tbar-left{display:flex;align-items:center;gap:18px;min-width:0;}
+.dm .brand{font-family:'Noto Serif KR',serif;font-weight:700;font-size:17px;white-space:nowrap;}
+.dm .brand small{font-family:'Noto Sans KR',sans-serif;font-weight:400;font-size:12px;color:#A9BBD6;margin-left:8px;}
+.dm .actions{display:flex;gap:10px;align-items:center;flex:none;}
+.dm .btn{font-size:13px;font-weight:700;border:none;border-radius:7px;padding:9px 16px;cursor:pointer;font-family:inherit;white-space:nowrap;}
+.dm .btn-gold{background:var(--gold);color:var(--navy);}
+.dm .btn-gold:hover{background:var(--gold-lt);}
+.dm .btn-ghost{background:transparent;color:#C9D6EA;border:1px solid #2c4a72;}
+.dm .btn-ghost:hover{background:#16335C;}
+.dm .btn:focus-visible{outline:2px solid var(--gold-lt);outline-offset:2px;}
+
+/* 2단 레이아웃 */
+.dm .app{display:grid;grid-template-columns:380px 1fr;align-items:start;}
+
+/* 입력 폼 */
+.dm .form-pane{position:sticky;top:49px;height:calc(100vh - 49px);overflow-y:auto;background:#fff;border-right:1px solid #d8d5cd;padding:18px 18px 60px;}
+.dm .sec{border:1px solid #e7e9ee;border-radius:10px;margin-bottom:14px;overflow:hidden;}
+.dm .sec>summary{cursor:pointer;list-style:none;padding:12px 14px;background:#F7FAFD;font-weight:700;font-size:13.5px;color:var(--navy);display:flex;align-items:center;gap:8px;user-select:none;}
+.dm .sec>summary::-webkit-details-marker{display:none;}
+.dm .sec>summary .dot{width:8px;height:8px;background:var(--gold);border-radius:2px;}
+.dm .sec>summary .chev{margin-left:auto;color:#9AA3B2;font-size:11px;transition:transform .2s;}
+.dm .sec[open]>summary .chev{transform:rotate(90deg);}
+.dm .sec .body{padding:12px 14px;}
+
+/* 미리보기 */
+.dm .preview-pane{padding:34px 34px 60px;display:flex;flex-direction:column;align-items:center;gap:30px;overflow-x:auto;}
+.dm .pglabel{font-size:12px;color:var(--muted);font-weight:600;align-self:flex-start;}
+.dm .pgwrap{transform-origin:top center;}
+
 /* ----- 인쇄: A4 두 장, 각 페이지 분리 ----- */
 @page{size:A4;margin:0;}
 @media print{

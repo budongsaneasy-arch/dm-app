@@ -243,30 +243,10 @@ export default {
 </script>
 
 <style scoped>
-.dm { font-family: 'Noto Sans KR', sans-serif; color: #2A2F3A; background: #e7e5df; }
+/* 셸(.dm .toolbar .app .form-pane .sec .preview-pane …) 스타일은 dmPages.css 에 있습니다.
+   툴바는 DmStudio 가, 폼은 템플릿별 편집기가 그려서 scoped 로는 한쪽에만 걸리기 때문입니다.
+   여기에는 기본 템플릿 폼에만 쓰는 것만 남깁니다. */
 
-/* 툴바 */
-.toolbar { position: sticky; top: 0; z-index: 30; display: flex; align-items: center; justify-content: space-between; background: #0E2546; color: #fff; padding: 12px 22px; box-shadow: 0 2px 12px rgba(0,0,0,.18); }
-.brand { font-family: 'Noto Serif KR', serif; font-weight: 700; font-size: 17px; }
-.brand small { font-family: 'Noto Sans KR', sans-serif; font-weight: 400; font-size: 12px; color: #A9BBD6; margin-left: 8px; }
-.actions { display: flex; gap: 10px; align-items: center; }
-.btn { font-size: 13px; font-weight: 700; border: none; border-radius: 7px; padding: 9px 16px; cursor: pointer; }
-.btn-gold { background: #C29B45; color: #0E2546; }
-.btn-gold:hover { background: #E7C778; }
-.btn-ghost { background: transparent; color: #C9D6EA; border: 1px solid #2c4a72; }
-.btn-ghost:hover { background: #16335C; }
-
-.app { display: grid; grid-template-columns: 380px 1fr; align-items: start; }
-
-/* 폼 */
-.form-pane { position: sticky; top: 49px; height: calc(100vh - 49px); overflow-y: auto; background: #fff; border-right: 1px solid #d8d5cd; padding: 18px 18px 60px; }
-.sec { border: 1px solid #e7e9ee; border-radius: 10px; margin-bottom: 14px; overflow: hidden; }
-.sec > summary { cursor: pointer; list-style: none; padding: 12px 14px; background: #F7FAFD; font-weight: 700; font-size: 13.5px; color: #0E2546; display: flex; align-items: center; gap: 8px; user-select: none; }
-.sec > summary::-webkit-details-marker { display: none; }
-.sec > summary .dot { width: 8px; height: 8px; background: #C29B45; border-radius: 2px; }
-.sec > summary .chev { margin-left: auto; color: #9AA3B2; font-size: 11px; transition: transform .2s; }
-.sec[open] > summary .chev { transform: rotate(90deg); }
-.sec .body { padding: 12px 14px; }
 .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .toggle { display: flex; align-items: center; gap: 8px; font-size: 12.5px; font-weight: 600; color: #41506A; cursor: pointer; }
 .toggle input { width: 16px; height: 16px; accent-color: #0E2546; }
@@ -278,14 +258,4 @@ export default {
 .file-btn:hover { background: #e3ebf5; }
 .rowcard { border: 1px solid #eceef2; border-radius: 8px; padding: 10px; margin-bottom: 9px; }
 .rowcard .rt { font-size: 11px; font-weight: 700; color: #0E2546; margin-bottom: 7px; }
-
-/* 미리보기 */
-.preview-pane { padding: 34px 34px 60px; display: flex; flex-direction: column; align-items: center; gap: 30px; overflow-x: auto; }
-.pglabel { font-size: 12px; color: #6B7280; font-weight: 600; align-self: flex-start; }
-.pgwrap { transform-origin: top center; }
-
-/* 인쇄 시 폼·툴바 숨김, 페이지만 출력 */
-/* 인쇄 규칙은 dmPages.css 로 옮겼습니다.
-   scoped 스타일은 이 컴포넌트가 그린 요소에만 걸리는데, 툴바는 DmStudio 가 그리고
-   폼은 템플릿마다 다른 컴포넌트가 그리기 때문입니다. */
 </style>

@@ -7,12 +7,15 @@
 <template>
   <div class="dm">
     <div class="toolbar">
-      <div class="brand">
-        부동산 DM 생성기
-        <small>데이터 입력 → A4 자동 생성 → PDF 인쇄</small>
+      <!-- 왼쪽: 제목 + 템플릿 탭 / 오른쪽: 동작 버튼 -->
+      <div class="tbar-left">
+        <div class="brand">
+          부동산 DM 생성기
+          <small>데이터 입력 → A4 자동 생성 → PDF 인쇄</small>
+        </div>
+        <TemplateSelector v-model="templateType" />
       </div>
       <div class="actions">
-        <TemplateSelector v-model="templateType" />
         <button class="btn btn-ghost" @click="resetActive">샘플로 초기화</button>
         <button class="btn btn-gold" @click="printDM">PDF 저장 / 인쇄</button>
       </div>
