@@ -86,7 +86,7 @@ applyQueryPrefill(this.m); // ← localStorage 복원 다음, 그 외 초기화 
 아래 URL을 직접 열어 6개 필드가 채워지고, 주소창에서 쿼리가 사라지는지 확인하세요.
 
 ```
-https://dmapp.bdseasy.com/?bizName=%ED%85%8C%EC%8A%A4%ED%8A%B8%EB%B6%80%EB%8F%99%EC%82%B0&regNo=11110-2024-00001&repName=%ED%99%8D%EA%B8%B8%EB%8F%99&phone1=02-1234-5678&phone2=010-1234-5678&address=%EC%84%9C%EC%9A%B8%ED%8A%B9%EB%B3%84%EC%8B%9C+%EC%A2%85%EB%A1%9C%EA%B5%AC+%EC%84%B8%EC%A2%85%EB%8C%80%EB%A1%9C+1
+https://dmapp.bdseasy.com/?bizName=%EC%98%88%EC%8B%9C%EB%B6%80%EB%8F%99%EC%82%B0&regNo=11110-2024-00001&repName=%ED%99%8D%EA%B8%B8%EB%8F%99&phone1=02-1234-5678&phone2=010-1234-5678&address=%EC%84%9C%EC%9A%B8%ED%8A%B9%EB%B3%84%EC%8B%9C+%EC%A2%85%EB%A1%9C%EA%B5%AC+%EC%84%B8%EC%A2%85%EB%8C%80%EB%A1%9C+1
 ```
 
 추가 확인:
