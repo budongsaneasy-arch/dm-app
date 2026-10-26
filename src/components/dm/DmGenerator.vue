@@ -51,7 +51,7 @@
         <details class="sec">
           <summary><span class="dot"></span>인사말<span class="chev">▶</span></summary>
           <div class="body">
-            <VField label="대상 (단지명 + 소유주님께)" :max="L.greetTarget" v-model="m.greetTarget" />
+            <VField label="대상 (단지명(지역명) + 소유주님께)" :max="L.greetTarget" v-model="m.greetTarget" />
             <VField label="인사말 본문" :max="L.greetBody" :rows="5" v-model="m.greetBody" />
           </div>
         </details>

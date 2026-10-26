@@ -12,7 +12,7 @@ export const LIMITS = {
   phone: 20,          // 전화번호
   address: 44,        // 사무소 주소
   addrNote: 80,       // 주소보정 안내
-  greetTarget: 26,    // 인사말 대상 (단지명 + 소유주님께)
+  greetTarget: 26,    // 인사말 대상 (단지명(지역명) + 소유주님께)
   greetBody: 120,     // 인사말 본문
   tableTitle: 12,     // 시세표 제목
   baseDate: 24,       // 기준일
