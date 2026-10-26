@@ -1,0 +1,19 @@
+{
+  "name": "dm-app",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "부동산 DM 생성기 — A4 앞·뒤 2페이지 DM 생성 및 PDF 저장",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "vue": "^3.5.44"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^6.0.10",
+    "vite": "^8.3.5"
+  }
+}

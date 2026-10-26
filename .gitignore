@@ -1,0 +1,22 @@
+# 의존성 / 빌드 산출물
+node_modules/
+dist/
+*.local
+
+# OS
+Thumbs.db
+desktop.ini
+.DS_Store
+
+# 편집기
+.vscode/
+.idea/
+
+# 고객 데이터는 저장소에 올리지 않습니다
+/data/
+*.customer.json
+*.고객.json
+
+# 원본 전달 파일 (src/, docs/ 로 정리 완료)
+/DM 템플릿 디자인 구성.zip
+/dmapp-querystring-prefill-guide*.md

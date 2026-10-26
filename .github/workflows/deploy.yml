@@ -1,8 +1,22 @@
 name: 부동산DM생성기 배포
 
+# deploy- 로 시작하는 태그를 밀면 배포됩니다. (예: git tag deploy-0.1.0 && git push origin deploy-0.1.0)
+# main 에 그냥 푸시해도 배포되지 않습니다. Actions 탭에서 수동 실행도 가능합니다.
 on:
   push:
     tags: ['deploy-*']
+  workflow_dispatch:
+
+# deploy-pages 액션에 필요한 권한
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# 배포가 겹치면 뒤엣것을 기다리게 함 (진행 중인 배포는 취소하지 않음)
+concurrency:
+  group: pages
+  cancel-in-progress: false
 
 jobs:
   build:
@@ -10,8 +24,37 @@ jobs:
     steps:
       - name: 체크아웃
         uses: actions/checkout@v7
+
       - name: Pages 설정
         uses: actions/configure-pages@v6
+
+      - name: Node 설치
+        uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+          cache: npm
+
+      - name: 의존성 설치
+        run: npm ci
+
+      - name: 빌드
+        run: npm run build
+
+      # dist/CNAME (dmapp.bdseasy.com) 이 빠지면 커스텀 도메인 연결이 끊깁니다.
+      - name: 산출물 점검
+        run: |
+          test -f dist/index.html || { echo "dist/index.html 이 없습니다"; exit 1; }
+          test -f dist/CNAME || { echo "dist/CNAME 이 없습니다"; exit 1; }
+          if grep -q '/dm-app/assets/' dist/index.html; then
+            echo "base 경로가 저장소 이름으로 잡혔습니다. vite.config.js 의 base 를 '/' 로 고치세요."
+            exit 1
+          fi
+          echo "점검 통과:"; ls -R dist
+
+      - name: 산출물 업로드
+        uses: actions/upload-pages-artifact@v5
+        with:
+          path: ./dist
 
   deploy:
     needs: build
