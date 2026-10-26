@@ -70,19 +70,39 @@ docs/
 - 인쇄 시 폼·툴바는 자동으로 숨겨집니다
 - **"배경 그래픽(Background graphics)" 옵션을 켜야** 네이비/골드 배경이 인쇄됩니다
 
-## 데이터 저장
+## 입력값 보관 정책
 
-입력값은 `localStorage('dm_model')` 에 자동 임시저장됩니다. 서버 저장으로 바꾸려면 `DmGenerator.vue` 의 `mounted()` 로드 로직과 `watch.m` 저장 로직을 API 호출로 교체하세요.
+입력값은 **그 탭(세션) 안에서만** 보관됩니다. 서버로 전송되지 않고, 브라우저를 벗어나지 않습니다.
+
+| 상황 | 동작 |
+| --- | --- |
+| 다시 들어옴 (새 탭) | **처음부터 입력** — 샘플 데이터로 시작 |
+| 같은 탭에서 새로고침 | 입력값 복원 — 실수로 날아가지 않도록 |
+| 탭을 닫음 | 입력값 삭제 |
+
+`sessionStorage('dm_model')` 를 쓰기 때문입니다. 사무실 공용 PC 에 사무소 정보나 고객 정보가
+기한 없이 남지 않습니다. 구버전이 `localStorage` 에 남긴 값은 앱이 로드될 때 자동으로 지웁니다.
+
+서버 저장으로 바꾸려면 `DmGenerator.vue` 의 `mounted()` 로드 로직과 `watch.m` 저장 로직을
+API 호출로 교체하세요.
 
 **이 저장소는 공개(public) 입니다.** `dmModel.js` 의 `sampleData()` 는 전부 가상의 예시값(`예시부동산`, `홍길동`, `02-0000-0000`, `OO아파트` 등)이며, 실제 사무소 정보나 실거래가가 아닙니다. 실제 고객·사무소 정보를 `sampleData()` 에 넣어 커밋하지 마세요.
 
-## 본 서비스 연동 (쿼리스트링 프리필)
+## 본 서비스 연동 (프래그먼트 프리필)
 
-본 서비스 `bdseasy.com` 의 **마케팅 > DM 템플릿** 메뉴가 이 앱을 새 탭으로 열 때, 로그인한 중개사의 사무소 정보를 URL 로 넘겨줍니다. 앱은 그 값으로 입력 폼 6칸을 미리 채웁니다. 중개사가 DM 만들 때마다 사무소 정보를 다시 입력하지 않게 하는 것이 목적입니다.
+본 서비스 `bdseasy.com` 의 **마케팅 > DM 템플릿** 메뉴가 이 앱을 새 탭으로 열 때, 로그인한 중개사의
+사무소 정보를 URL 로 넘겨줍니다. 앱은 그 값으로 입력 폼 6칸을 미리 채웁니다. 중개사가 DM 만들 때마다
+사무소 정보를 다시 입력하지 않게 하는 것이 목적입니다.
 
 ```
-https://dmapp.bdseasy.com/?bizName=...&regNo=...&repName=...&phone1=...&phone2=...&address=...
+https://dmapp.bdseasy.com/#bizName=...&regNo=...&repName=...&phone1=...&phone2=...&address=...
 ```
+
+**값은 `?` 쿼리스트링이 아니라 `#` 프래그먼트로 받습니다.** `?` 뒤의 값은 HTTP 요청라인의 일부라서
+페이지를 받아오는 첫 요청에 실려 나가고, 이 앱은 GitHub Pages(앞단 Fastly CDN)에 올라가 있어
+개인 휴대전화번호가 양쪽 접근 로그에 남을 수 있습니다. `#` 뒤는 브라우저가 서버로 보내지 않습니다.
+`?` 로 온 값은 **의도적으로 무시**하고 콘솔에 경고를 남깁니다. 배경은
+[docs/security-review.md](docs/security-review.md) 참고.
 
 | 파라미터 | 모델 키 | 글자수 제한 |
 | --- | --- | --- |
@@ -95,15 +115,23 @@ https://dmapp.bdseasy.com/?bizName=...&regNo=...&repName=...&phone1=...&phone2=.
 
 구현은 `src/components/dm/queryPrefill.js` 에 있고 `DmGenerator.vue` 의 `mounted()` 에서 호출합니다.
 
-- 적용 순서: `sampleData()` → localStorage 복원 → **쿼리스트링 덮어쓰기** (URL 값이 저장값보다 우선)
+- 적용 순서: `sampleData()` → 같은 탭 세션 복원 → **프래그먼트 덮어쓰기** (URL 값이 저장값보다 우선)
 - 값이 빈 파라미터는 아예 오지 않으므로 **6개 중 일부만** 올 수 있습니다. 안 온 칸은 기존 값을 유지합니다
 - URL 값은 신뢰하지 않는 외부 입력으로 다룹니다 — `trim()` 후 `LIMITS` 제한으로 자르고, 위 6개 외의 파라미터는 무시합니다
-- 적용 후 `history.replaceState` 로 주소창의 쿼리를 지웁니다. 안 지우면 사용자가 값을 고친 뒤 새로고침할 때 URL 값으로 되돌아갑니다
+- 적용 후 `history.replaceState` 로 주소창의 프래그먼트를 지웁니다. 안 지우면 사용자가 값을 고친 뒤 새로고침할 때 URL 값으로 되돌아갑니다
 - `bizType`, `issue`, `repTitle`, 프로필 사진은 전달되지 않습니다 — 기존 기본값/저장값을 유지합니다
+- ⚠️ 허용 목록에 `addrNote`·`closing` 은 **절대 추가하지 마세요.** 이 두 필드만 `v-html` 로 출력됩니다
 
-사양 전문은 `docs/querystring-prefill.md` 에 있습니다.
+현재 본 서비스에서 값을 넘기는 작업은 진행되지 않았고, 앱은 **독립적으로 운영** 중입니다.
+파라미터 없이 열리면 샘플 데이터로 시작합니다.
 
-> **보안 검토 사항**: 현재 `?` 쿼리스트링 방식은 개인 휴대전화번호가 요청 URL 에 담겨 GitHub·Fastly 서버 로그에 남을 수 있습니다. `#` 프래그먼트로 바꾸면 해결됩니다. 자세한 내용은 [docs/security-review.md](docs/security-review.md) 참고.
+사양 전문은 [docs/querystring-prefill.md](docs/querystring-prefill.md) 에 있습니다.
+
+## 보안
+
+- **CSP·Referrer-Policy**: 프로덕션 빌드에 `default-src 'none'` 기반 CSP 와 `strict-origin-when-cross-origin` referrer 정책을 `meta` 태그로 주입합니다 (`vite.config.js` 의 `injectCsp`). dev 서버는 HMR 때문에 제외됩니다.
+- **한계**: GitHub Pages 는 정적 호스팅이라 응답 헤더를 설정할 수 없습니다. iframe 삽입 차단(`frame-ancestors`)은 `meta` 로 적용되지 않으므로, 필요하면 헤더를 설정할 수 있는 호스팅으로 옮겨야 합니다.
+- 점검 결과 전문: [docs/security-review.md](docs/security-review.md)
 
 ## 광고 표시 관련 주의
 

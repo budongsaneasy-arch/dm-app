@@ -179,8 +179,11 @@ import VField from './VField.vue';
 import DmFrontPage from './DmFrontPage.vue';
 import DmBackPage from './DmBackPage.vue';
 import { sampleData, LIMITS, BLANK_ROW } from './dmModel.js';
-import { applyQueryPrefill, clearQueryString } from './queryPrefill.js';
+import { applyQueryPrefill, clearPrefillFromUrl } from './queryPrefill.js';
 
+// 입력값은 탭(세션) 단위로만 보관합니다. 탭을 닫으면 사라지고,
+// 메뉴를 다시 눌러 새 탭으로 들어오면 처음부터 입력하게 됩니다.
+// 같은 탭에서 새로고침한 경우에만 복원되어, 실수로 입력이 날아가지 않습니다.
 const STORAGE_KEY = 'dm_model';
 
 export default {
@@ -204,7 +207,7 @@ export default {
     resetSample() {
       if (confirm('입력 내용을 샘플 데이터로 초기화할까요?')) {
         this.m = sampleData();
-        try { localStorage.removeItem(STORAGE_KEY); } catch (e) {}
+        try { sessionStorage.removeItem(STORAGE_KEY); } catch (e) {}
       }
     },
     printDM() { window.print(); },
@@ -221,13 +224,19 @@ export default {
     },
   },
   watch: {
-    m: { deep: true, handler(v) { try { localStorage.setItem(STORAGE_KEY, JSON.stringify(v)); } catch (e) {} } },
+    m: { deep: true, handler(v) { try { sessionStorage.setItem(STORAGE_KEY, JSON.stringify(v)); } catch (e) {} } },
   },
   mounted() {
-    try { const s = localStorage.getItem(STORAGE_KEY); if (s) this.m = Object.assign(sampleData(), JSON.parse(s)); } catch (e) {}
-    // 본 서비스에서 넘어온 사무소 정보로 덮어씁니다 (localStorage 저장값보다 우선).
-    // 적용 후 주소창의 쿼리를 지워, 새로고침 때 사용자가 고친 값이 되돌아가지 않게 합니다.
-    if (applyQueryPrefill(this.m).length) clearQueryString();
+    // 이전 버전이 localStorage 에 남겨 둔 입력값을 지웁니다.
+    // 공용 PC 에 사무소 정보나 고객 정보가 기한 없이 남아 있지 않도록 하는 정리 작업입니다.
+    try { localStorage.removeItem(STORAGE_KEY); } catch (e) {}
+
+    // 같은 탭에서 새로고침한 경우에만 복원됩니다. 새 탭이면 비어 있어 샘플 데이터로 시작합니다.
+    try { const s = sessionStorage.getItem(STORAGE_KEY); if (s) this.m = Object.assign(sampleData(), JSON.parse(s)); } catch (e) {}
+
+    // 본 서비스에서 넘어온 사무소 정보로 덮어씁니다 (세션 복원값보다 우선).
+    // 적용 후 주소창의 프래그먼트를 지워, 새로고침 때 사용자가 고친 값이 되돌아가지 않게 합니다.
+    if (applyQueryPrefill(this.m).length) clearPrefillFromUrl();
     this.fitScale();
     window.addEventListener('resize', this.fitScale);
   },
