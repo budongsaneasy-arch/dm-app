@@ -16,7 +16,12 @@
         <TemplateSelector v-model="templateType" />
       </div>
       <div class="actions">
-        <button class="btn btn-ghost" @click="resetActive">샘플로 초기화</button>
+        <template v-if="askingReset">
+          <span class="ask">입력 내용을 지우고 샘플로 되돌릴까요?</span>
+          <button class="btn btn-danger" @click="resetActive">정말 초기화</button>
+          <button class="btn btn-ghost" @click="askingReset = false">취소</button>
+        </template>
+        <button v-else class="btn btn-ghost" @click="askingReset = true">샘플로 초기화</button>
         <button class="btn btn-gold" @click="printDM">PDF 저장 / 인쇄</button>
       </div>
     </div>
@@ -72,19 +77,23 @@ const custom = reactive(Object.assign(customSampleData(), load(KEY_CUSTOM, null)
 // 적용 후 주소창의 프래그먼트를 지워, 새로고침 때 사용자가 고친 값이 되돌아가지 않게 합니다.
 if (applyQueryPrefill(office).length) clearPrefillFromUrl();
 
-watch(templateType, (v) => save(KEY_TEMPLATE, v));
+watch(templateType, (v) => { save(KEY_TEMPLATE, v); askingReset.value = false; });
 watch(office, (v) => save(KEY_OFFICE, { ...v }), { deep: true });
 watch(custom, (v) => save(KEY_CUSTOM, JSON.parse(JSON.stringify(v))), { deep: true });
 
 /* ---------- 툴바 ---------- */
 const legacyRef = ref(null);
 
+// 네이티브 confirm 을 쓰지 않습니다. 브라우저가 대화상자를 차단하면
+// confirm() 이 조용히 false 를 돌려줘 버튼이 먹지 않는 것처럼 보입니다.
+const askingReset = ref(false);
+
 function resetActive() {
+  askingReset.value = false;
   if (templateType.value === 'legacy') {
     legacyRef.value?.resetSample();
     return;
   }
-  if (!confirm('입력 내용을 샘플 데이터로 초기화할까요?')) return;
   const fresh = customSampleData();
   Object.keys(custom).forEach((k) => { delete custom[k]; });
   Object.assign(custom, fresh);

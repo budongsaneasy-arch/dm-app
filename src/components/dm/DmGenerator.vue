@@ -199,11 +199,10 @@ export default {
   },
   methods: {
     addRow() { this.m.rows.push(BLANK_ROW()); },
+    // 확인 절차는 DmStudio 의 툴바가 맡습니다. 여기서는 바로 초기화합니다.
     resetSample() {
-      if (confirm('입력 내용을 샘플 데이터로 초기화할까요?')) {
-        this.m = sampleData();
-        try { sessionStorage.removeItem(STORAGE_KEY); } catch (e) {}
-      }
+      this.m = sampleData();
+      try { sessionStorage.removeItem(STORAGE_KEY); } catch (e) {}
     },
     printDM() { window.print(); },
     upload(e, key) {

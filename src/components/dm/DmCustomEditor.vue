@@ -75,9 +75,15 @@
             <div class="blk-head">
               <span class="blk-type">{{ typeLabel(blk.type) }}</span>
               <div class="blk-ctrl">
-                <button type="button" class="mini" :disabled="i === 0" title="위로" @click="move(i, -1)">▲</button>
-                <button type="button" class="mini" :disabled="i === activeBlocks.length - 1" title="아래로" @click="move(i, 1)">▼</button>
-                <button type="button" class="mini danger" title="삭제" @click="remove(i)">삭제</button>
+                <template v-if="askingId === blk.id">
+                  <button type="button" class="mini danger strong" @click="remove(i)">정말 삭제</button>
+                  <button type="button" class="mini" @click="askingId = null">취소</button>
+                </template>
+                <template v-else>
+                  <button type="button" class="mini" :disabled="i === 0" title="위로" @click="move(i, -1)">▲</button>
+                  <button type="button" class="mini" :disabled="i === activeBlocks.length - 1" title="아래로" @click="move(i, 1)">▼</button>
+                  <button type="button" class="mini danger" title="삭제" @click="askingId = blk.id">삭제</button>
+                </template>
               </div>
             </div>
 
@@ -165,7 +171,12 @@
             기본은 A4 단면입니다. 뒷면을 추가하면 매물 요약과 시장 동향 프리셋이 들어갑니다.
           </p>
           <button v-if="!model.hasBackPage" type="button" class="mini" @click="addBack">+ 뒷면 추가</button>
-          <button v-else type="button" class="mini danger" @click="removeBack">뒷면 삭제</button>
+          <template v-else-if="askingId === 'back'">
+            <button type="button" class="mini danger strong" @click="removeBack">정말 삭제</button>
+            <button type="button" class="mini" @click="askingId = null">취소</button>
+            <p class="note warn">뒷면에 입력한 내용이 사라집니다.</p>
+          </template>
+          <button v-else type="button" class="mini danger" @click="askingId = 'back'">뒷면 삭제</button>
         </div>
       </details>
     </div>
@@ -212,6 +223,10 @@ const L = LIMITS;
 const CL = CUSTOM_LIMITS;
 
 const side = ref('front');
+// 삭제는 네이티브 confirm 대신 인라인 2단계로 확인받습니다.
+// 브라우저가 대화상자를 차단하면 confirm() 이 조용히 false 를 돌려줘서
+// 버튼을 눌러도 아무 일도 일어나지 않는 것처럼 보이기 때문입니다.
+const askingId = ref(null);
 const logoInput = ref(null);
 const overflow = reactive({ front: false, back: false });
 
@@ -231,9 +246,8 @@ function move(i, dir) {
 }
 
 function remove(i) {
-  const blk = activeBlocks.value[i];
-  if (!confirm(`"${typeLabel(blk.type)}" 블록을 삭제할까요?`)) return;
   activeBlocks.value.splice(i, 1);
+  askingId.value = null;
 }
 
 function add(type) {
@@ -258,11 +272,11 @@ function addBack() {
 }
 
 function removeBack() {
-  if (!confirm('뒷면을 삭제할까요? 뒷면에 입력한 내용이 사라집니다.')) return;
   props.model.hasBackPage = false;
   props.model.backBlocks = [];
   side.value = 'front';
   overflow.back = false;
+  askingId.value = null;
 }
 
 /* ---------- 로고 ---------- */
@@ -337,6 +351,8 @@ onBeforeUnmount(() => window.removeEventListener('resize', fitScale));
 .mini:hover:not(:disabled) { border-color: #163766; }
 .mini:disabled { opacity: 0.4; cursor: not-allowed; }
 .mini.danger { color: #b4231b; }
+.mini.danger.strong { background: #b4231b; border-color: #b4231b; color: #fff; }
+.note.warn { color: #b4231b; margin: 7px 0 0; }
 
 .add-blk { border-top: 1px solid #e4e9f0; padding-top: 11px; margin-top: 4px; display: flex; flex-wrap: wrap; gap: 5px; }
 .add-title { width: 100%; font-size: 11px; font-weight: 700; color: #8a93a5; margin-bottom: 3px; }

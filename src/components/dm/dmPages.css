@@ -132,6 +132,9 @@
 .dm .btn-gold:hover{background:var(--gold-lt);}
 .dm .btn-ghost{background:transparent;color:#C9D6EA;border:1px solid #2c4a72;}
 .dm .btn-ghost:hover{background:#16335C;}
+.dm .btn-danger{background:#B4231B;color:#fff;}
+.dm .btn-danger:hover{background:#CF2D23;}
+.dm .ask{font-size:12.5px;color:#C9D6EA;white-space:nowrap;}
 .dm .btn:focus-visible{outline:2px solid var(--gold-lt);outline-offset:2px;}
 
 /* 2단 레이아웃 */
