@@ -57,7 +57,7 @@ export function sampleData() {
     profilePhoto: null, showProfile: true, showQR: true,
     // 후킹 / 인사말
     addrNote: '등기부 소유자 주소로 발송됩니다. 주소 변경 시 연락 주시면 새 주소로 보내드리고 모바일 쿠폰을 드립니다.',
-    greetTarget: 'OO아파트 소유주님께',
+    greetTarget: 'OO아파트(OO동) 소유주님께',
     greetBody: 'OO동 단지 거래만 전문으로 다뤄온 예시부동산입니다. 소유하신 집의 정확한 가치와 지금의 시장 흐름을, 가장 가까운 이웃 전문가가 정직하게 전해드리겠습니다. 늘 마음의 문을 활짝 열고 기다리겠습니다.',
     // 시세표
     tableTitle: '시세 기준표', baseDate: '2026. 1월 기준 · 단위 만원/억',
