@@ -67,10 +67,6 @@ src/
     VField.vue           글자수 카운터 입력 필드 (공용)
     dmPages.css          A4·레이아웃 공용 스타일 + 인쇄(@page A4) 규칙
     README.md            컴포넌트 상세 문서
-docs/
-  querystring-prefill.md 본 서비스(bdseasy.com) 연동 사양
-  security-review.md     연동 방식 보안 점검 결과
-  route-request.md       개발팀 전달용 연동 요청문
 ```
 
 ## 템플릿
@@ -137,50 +133,24 @@ API 호출로 교체하세요.
 
 **이 저장소는 공개(public) 입니다.** `dmModel.js` 의 `sampleData()` 는 전부 가상의 예시값(`예시부동산`, `홍길동`, `02-0000-0000`, `OO아파트` 등)이며, 실제 사무소 정보나 실거래가가 아닙니다. 실제 고객·사무소 정보를 `sampleData()` 에 넣어 커밋하지 마세요.
 
-## 본 서비스 연동 (프래그먼트 프리필)
+## 본 서비스 연동
 
-본 서비스 `bdseasy.com` 의 **마케팅 > DM 템플릿** 메뉴가 이 앱을 새 탭으로 열 때, 로그인한 중개사의
-사무소 정보를 URL 로 넘겨줍니다. 앱은 그 값으로 입력 폼 6칸을 미리 채웁니다. 중개사가 DM 만들 때마다
-사무소 정보를 다시 입력하지 않게 하는 것이 목적입니다.
+본 서비스에서 이 앱을 새 탭으로 열 때, 로그인한 중개사의 사무소 정보를 URL 프래그먼트(`#`)로
+넘겨받아 입력 폼을 미리 채웁니다. 받는 쪽 구현은 `src/components/dm/queryPrefill.js` 입니다.
 
-```
-https://dmapp.bdseasy.com/#bizName=...&regNo=...&repName=...&phone1=...&phone2=...&address=...
-```
+- 쿼리스트링(`?`)으로 온 값은 **의도적으로 무시**합니다. 프래그먼트만 받습니다.
+- 허용 목록에 없는 파라미터는 무시하고, 들어온 값은 `trim()` 후 글자수 제한으로 자릅니다.
+- 적용 후 주소창에서 프래그먼트를 지웁니다.
 
-**값은 `?` 쿼리스트링이 아니라 `#` 프래그먼트로 받습니다.** `?` 뒤의 값은 HTTP 요청라인의 일부라서
-페이지를 받아오는 첫 요청에 실려 나가고, 이 앱은 GitHub Pages(앞단 Fastly CDN)에 올라가 있어
-개인 휴대전화번호가 양쪽 접근 로그에 남을 수 있습니다. `#` 뒤는 브라우저가 서버로 보내지 않습니다.
-`?` 로 온 값은 **의도적으로 무시**하고 콘솔에 경고를 남깁니다. 배경은
-[docs/security-review.md](docs/security-review.md) 참고.
-
-| 파라미터 | 모델 키 | 글자수 제한 |
-| --- | --- | --- |
-| `bizName` | `m.bizName` | `LIMITS.bizName` (20) |
-| `regNo` | `m.regNo` | `LIMITS.regNo` (22) |
-| `repName` | `m.repName` | `LIMITS.repName` (10) |
-| `phone1` | `m.phone1` | `LIMITS.phone` (20) |
-| `phone2` | `m.phone2` | `LIMITS.phone` (20) |
-| `address` | `m.address` | `LIMITS.address` (44) |
-
-구현은 `src/components/dm/queryPrefill.js` 에 있고 `DmGenerator.vue` 의 `mounted()` 에서 호출합니다.
-
-- 적용 순서: `sampleData()` → 같은 탭 세션 복원 → **프래그먼트 덮어쓰기** (URL 값이 저장값보다 우선)
-- 값이 빈 파라미터는 아예 오지 않으므로 **6개 중 일부만** 올 수 있습니다. 안 온 칸은 기존 값을 유지합니다
-- URL 값은 신뢰하지 않는 외부 입력으로 다룹니다 — `trim()` 후 `LIMITS` 제한으로 자르고, 위 6개 외의 파라미터는 무시합니다
-- 적용 후 `history.replaceState` 로 주소창의 프래그먼트를 지웁니다. 안 지우면 사용자가 값을 고친 뒤 새로고침할 때 URL 값으로 되돌아갑니다
-- `bizType`, `issue`, `repTitle`, 프로필 사진은 전달되지 않습니다 — 기존 기본값/저장값을 유지합니다
-- ⚠️ 허용 목록에 `addrNote`·`closing` 은 **절대 추가하지 마세요.** 이 두 필드만 `v-html` 로 출력됩니다
-
-현재 본 서비스에서 값을 넘기는 작업은 진행되지 않았고, 앱은 **독립적으로 운영** 중입니다.
-파라미터 없이 열리면 샘플 데이터로 시작합니다.
-
-사양 전문은 [docs/querystring-prefill.md](docs/querystring-prefill.md) 에 있습니다.
+> 전달 규약과 파라미터 정의는 **내부 문서**로 관리하며 이 저장소에 포함하지 않습니다.
 
 ## 보안
 
-- **CSP·Referrer-Policy**: 프로덕션 빌드에 `default-src 'none'` 기반 CSP 와 `strict-origin-when-cross-origin` referrer 정책을 `meta` 태그로 주입합니다 (`vite.config.js` 의 `injectCsp`). dev 서버는 HMR 때문에 제외됩니다.
-- **한계**: GitHub Pages 는 정적 호스팅이라 응답 헤더를 설정할 수 없습니다. iframe 삽입 차단(`frame-ancestors`)은 `meta` 로 적용되지 않으므로, 필요하면 헤더를 설정할 수 있는 호스팅으로 옮겨야 합니다.
-- 점검 결과 전문: [docs/security-review.md](docs/security-review.md)
+- 입력값은 브라우저를 벗어나지 않습니다. 서버로 전송하는 코드가 없습니다.
+- 프로덕션 빌드에 CSP 와 Referrer-Policy 를 `meta` 로 주입합니다 (`vite.config.js` 의 `injectCsp`).
+- URL 로 들어온 값은 신뢰하지 않는 외부 입력으로 다룹니다.
+
+> 점검 결과와 남은 과제는 **내부 문서**로 관리하며 이 저장소에 포함하지 않습니다.
 
 ## 광고 표시 관련 주의
 

@@ -20,3 +20,10 @@ desktop.ini
 # 원본 전달 파일 (src/, docs/ 로 정리 완료)
 /DM 템플릿 디자인 구성.zip
 /dmapp-querystring-prefill-guide*.md
+
+# 내부 설계 문서 — 저장소가 공개(public)라 올리지 않습니다.
+# 연동 사양·보안 점검·개발팀 요청문은 비공개 경로로 전달하세요.
+/docs/
+
+# PDF 검증 산출물
+*.pdf
