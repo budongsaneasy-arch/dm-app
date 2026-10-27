@@ -159,6 +159,11 @@
 @page{size:A4;margin:0;}
 @media print{
   .dm-print-hide{display:none !important;}
+  /* 배경과 색을 인쇄물에 그대로 싣습니다.
+     이게 없으면 브라우저가 잉크를 아끼려고 네이비 헤더·표 머리글·지표 카드·CTA 의
+     배경을 지워 버려서, 흰 바탕에 흰 글씨만 남아 거의 안 보입니다.
+     크롬 인쇄 대화상자의 "배경 그래픽" 옵션을 켜지 않아도 적용됩니다. */
+  .dm .a4, .dm .a4 *{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
   /* 편집 UI 는 인쇄물에서 빠지고 A4 페이지만 남습니다.
      템플릿(legacy/custom-v2)이 어떤 컴포넌트로 그려지든 적용되도록 여기(공용 CSS)에 둡니다. */
   .dm .toolbar, .dm .form-pane, .dm .pglabel{display:none !important;}
