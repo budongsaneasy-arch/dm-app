@@ -12,6 +12,15 @@
           <VField label="상호 (브랜드)" :max="L.bizName" v-model="office.bizName" hint="예: OO부동산" />
           <VField label="상호 접미사" :max="L.bizType" v-model="office.bizType" hint="예: 공인중개사사무소" />
           <VField label="개설등록번호" :max="L.regNo" v-model="office.regNo" />
+
+          <label class="chk">
+            <input type="checkbox" v-model="model.showRep">
+            <span>헤더 우측에 대표자 표시</span>
+          </label>
+          <template v-if="model.showRep">
+            <VField label="대표 직함" :max="L.repTitle" v-model="office.repTitle" hint="예: 대표 공인중개사" />
+            <VField label="대표명" :max="L.repName" v-model="office.repName" />
+          </template>
           <VField label="주소보정 안내" :max="L.addrNote" :rows="3" v-model="office.addrNote" />
 
           <div class="field">

@@ -102,6 +102,7 @@ export function customSampleData() {
     // 상단 헤더
     logo: null, //                       사용자가 올린 로고 (data URI)
     showAddrNote: true, //               주소보정 안내 띠 표시 여부
+    showRep: true, //                    헤더 우측의 직함 + 대표명 표시 여부
 
     // 수신인
     showRecipient: true,

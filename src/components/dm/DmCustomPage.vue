@@ -20,7 +20,7 @@
           </div>
         </div>
         <div class="cstm-hdr-right">
-          <div class="iss">{{ office.repTitle }} {{ office.repName }}</div>
+          <div v-if="model.showRep && repLine" class="iss">{{ repLine }}</div>
           <div class="reg">개설등록번호 {{ office.regNo }}</div>
         </div>
       </div>
@@ -113,6 +113,10 @@ const bodyEl = ref(null);
 const overflow = ref(false);
 
 const isFront = computed(() => props.page === 'front');
+// 헤더 우측의 직함 + 대표명. 둘 다 비우거나 표시를 끄면 줄 자체가 사라집니다.
+const repLine = computed(() =>
+  [props.office.repTitle, props.office.repName].map((v) => (v || '').trim()).filter(Boolean).join(' ')
+);
 const blocks = computed(() => (isFront.value ? props.model.blocks : props.model.backBlocks));
 
 function styleClass(blk) {
