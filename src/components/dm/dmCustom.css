@@ -70,6 +70,12 @@
 .dm .cstm-blk.al-center { text-align: center; }
 .dm .cstm-blk.al-right { text-align: right; }
 
+/* 본문 단락과 강조 리스트는 편지 본문이라 다른 블록보다 130% 크게 씁니다.
+   (작게 12 → 15.6 / 보통 13.5 → 17.55 / 크게 15.5 → 20.15) */
+.dm .cstm-para.sz-sm, .dm .cstm-hl.sz-sm { font-size: 15.6px; }
+.dm .cstm-para.sz-md, .dm .cstm-hl.sz-md { font-size: 17.55px; }
+.dm .cstm-para.sz-lg, .dm .cstm-hl.sz-lg { font-size: 20.15px; }
+
 /* 본문 단락 — 기본 템플릿 인사말 본문과 같은 톤 */
 .dm .cstm-para { color: #3a4150; white-space: pre-wrap; }
 
