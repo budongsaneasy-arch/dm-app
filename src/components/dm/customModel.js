@@ -16,6 +16,9 @@ export const CUSTOM_LIMITS = {
   rowLabel: 14, //       표 한 칸의 항목명
   rowValue: 30, //       표 한 칸의 값
   sigLine: 60, //        서명 푸터 한 줄
+  caseCell: 16, //       거래사례 표 한 칸
+  policyText: 140, //    정책 항목 설명
+  footPhone: 44, //      하단 띠 전화번호
 };
 
 /** 블록 종류. key 가 모델에 저장되는 값입니다. */
@@ -23,7 +26,9 @@ export const BLOCK_TYPES = [
   { key: 'paragraph', label: '본문 단락', desc: '인사말·안내문 같은 장문 텍스트' },
   { key: 'highlight', label: '강조 리스트', desc: '앞머리를 굵게 쓰는 항목 나열' },
   { key: 'listing', label: '매물 요약 박스', desc: '단지명·면적·거래형태·가격' },
+  { key: 'cases', label: '거래사례 표', desc: '단지·면적·거래형태·가격·시기를 줄 단위로' },
   { key: 'market', label: '시장 동향 박스', desc: '최근 실거래가 요약' },
+  { key: 'policy', label: '부동산 정책 박스', desc: '최근 발표된 정책을 항목별로' },
   { key: 'signature', label: '서명 · 연락처', desc: '작성일자, 대표 공인중개사, 주소, 전화' },
 ];
 
@@ -46,6 +51,17 @@ export const ALIGN_OPTIONS = [
 // 같은 입력이면 같은 결과가 나오도록 두기 위함입니다.
 let seq = 0;
 const nextId = () => `b${(seq += 1)}`;
+
+/** 거래사례 표의 열. key 가 각 행에 저장되는 값입니다. */
+export const CASE_COLS = [
+  { key: 'name', label: '단지·소재지' },
+  { key: 'area', label: '면적' },
+  { key: 'deal', label: '거래형태' },
+  { key: 'price', label: '거래가' },
+  { key: 'date', label: '거래시기' },
+];
+
+export const blankCase = () => ({ name: '', area: '', deal: '', price: '', date: '' });
 
 /** 종류별 빈 블록을 만듭니다. 블록 추가 버튼이 이걸 씁니다. */
 export function createBlock(type) {
@@ -76,8 +92,14 @@ export function createBlock(type) {
         ],
       };
 
+    case 'cases':
+      return { ...common, title: '최근 거래사례', rows: [blankCase()] };
+
     case 'market':
       return { ...common, title: '최근 시장 동향', text: '' };
+
+    case 'policy':
+      return { ...common, title: '최근 부동산 정책', items: [{ label: '', text: '' }] };
 
     case 'signature':
       return {
@@ -154,22 +176,22 @@ export function customSampleData() {
     // 뒷면 (기본은 끔)
     hasBackPage: false,
     backBlocks: [],
+    footPhone: '010-0000-0000 / 사무실 00-000-0000', // 뒷면 하단 띠 왼쪽 (비우면 안 나옴)
   };
 }
 
-/** 뒷면을 켤 때 넣어 주는 기본 프리셋 */
+/** 뒷면을 켤 때 넣어 주는 기본 프리셋 — 거래사례 / 시장 동향 / 부동산 정책 */
 export function backPagePreset() {
   return [
     {
       id: nextId(),
-      type: 'listing',
+      type: 'cases',
       style: baseStyle(),
-      title: '보유 매물 요약',
+      title: '최근 거래사례',
       rows: [
-        { label: '단지명', value: 'OO아파트' },
-        { label: '면적', value: '전용 00㎡' },
-        { label: '거래형태', value: '매매' },
-        { label: '가격', value: '0억 0,000만원' },
+        { name: 'OO아파트 000동', area: '전용 00㎡', deal: '매매', price: '0억 0,000만원', date: '2026. 00월' },
+        { name: 'OO아파트 000동', area: '전용 00㎡', deal: '전세', price: '0억 0,000만원', date: '2026. 00월' },
+        { name: 'OO동 000-00 토지', area: '000㎡', deal: '매매', price: '0억 0,000만원', date: '2026. 00월' },
       ],
     },
     {
@@ -178,6 +200,16 @@ export function backPagePreset() {
       style: baseStyle(),
       title: '최근 시장 동향',
       text: '최근 3개월 실거래 기준으로 정리한 내용입니다. 실제 시세는 동·층·향에 따라 차이가 큽니다.',
+    },
+    {
+      id: nextId(),
+      type: 'policy',
+      style: baseStyle(),
+      title: '최근 부동산 정책',
+      items: [
+        { label: '세금 제도 변경', text: '보유 기간과 거주 요건에 따라 세 부담이 달라집니다. 매도 전 점검이 필요합니다.' },
+        { label: '대출 규제 변경', text: '대출 한도와 심사 기준이 조정되어 매수자의 자금 계획에 영향을 줍니다.' },
+      ],
     },
   ];
 }

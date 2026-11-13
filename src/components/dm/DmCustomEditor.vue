@@ -64,13 +64,16 @@
       </details>
 
       <details class="sec" open>
-        <summary><span class="dot"></span>본문 블록<span class="chev">▶</span></summary>
-        <div class="body">
+        <summary><span class="dot"></span>본문 블록 — {{ side === 'back' ? '뒷면' : '앞면' }}<span class="chev">▶</span></summary>
+        <div ref="blocksEl" class="body">
           <!-- 앞면 / 뒷면 전환 -->
           <div v-if="model.hasBackPage" class="side-tabs">
-            <button type="button" :class="{ on: side === 'front' }" @click="side = 'front'">앞면</button>
-            <button type="button" :class="{ on: side === 'back' }" @click="side = 'back'">뒷면</button>
+            <button type="button" :class="{ on: side === 'front' }" @click="side = 'front'">앞면 편집</button>
+            <button type="button" :class="{ on: side === 'back' }" @click="side = 'back'">뒷면 편집</button>
           </div>
+          <p v-if="model.hasBackPage" class="note">
+            지금 <b>{{ side === 'back' ? '뒷면' : '앞면' }}</b>의 블록을 편집하고 있습니다. 블록 추가·삭제·순서 이동은 선택한 면에 적용됩니다.
+          </p>
 
           <p v-if="overflow[side]" class="warn-line">
             A4 1페이지 규격을 초과했습니다. 내용을 줄여주세요
@@ -138,6 +141,41 @@
               <button type="button" class="mini" @click="blk.rows.push({ label: '', value: '' })">+ 항목 추가</button>
             </template>
 
+            <!-- 거래사례 표 -->
+            <template v-else-if="blk.type === 'cases'">
+              <VField label="표 제목" :max="CL.blockTitle" v-model="blk.title" />
+              <div v-for="(r, k) in blk.rows" :key="k" class="sub">
+                <div class="sub-head">
+                  <span>거래사례 {{ k + 1 }}</span>
+                  <button type="button" class="mini danger" @click="blk.rows.splice(k, 1)">삭제</button>
+                </div>
+                <VField label="단지·소재지" :max="CL.rowValue" v-model="r.name" />
+                <div class="pair">
+                  <VField label="면적" :max="CL.caseCell" v-model="r.area" />
+                  <VField label="거래형태" :max="CL.caseCell" v-model="r.deal" />
+                </div>
+                <div class="pair">
+                  <VField label="거래가" :max="CL.caseCell" v-model="r.price" />
+                  <VField label="거래시기" :max="CL.caseCell" v-model="r.date" />
+                </div>
+              </div>
+              <button type="button" class="mini" @click="blk.rows.push(blankCase())">+ 거래사례 추가</button>
+            </template>
+
+            <!-- 부동산 정책 박스 -->
+            <template v-else-if="blk.type === 'policy'">
+              <VField label="박스 제목" :max="CL.blockTitle" v-model="blk.title" />
+              <div v-for="(it, k) in blk.items" :key="k" class="sub">
+                <div class="sub-head">
+                  <span>정책 {{ k + 1 }}</span>
+                  <button type="button" class="mini danger" @click="blk.items.splice(k, 1)">삭제</button>
+                </div>
+                <VField label="정책 이름 (굵게)" :max="CL.itemLabel" v-model="it.label" />
+                <VField label="내용" :max="CL.policyText" :rows="3" v-model="it.text" />
+              </div>
+              <button type="button" class="mini" @click="blk.items.push({ label: '', text: '' })">+ 정책 추가</button>
+            </template>
+
             <!-- 시장 동향 박스 -->
             <template v-else-if="blk.type === 'market'">
               <VField label="박스 제목" :max="CL.blockTitle" v-model="blk.title" />
@@ -177,8 +215,18 @@
         <summary><span class="dot"></span>뒷면 (2페이지)<span class="chev">▶</span></summary>
         <div class="body">
           <p class="note">
-            기본은 A4 단면입니다. 뒷면을 추가하면 매물 요약과 시장 동향 프리셋이 들어갑니다.
+            기본은 A4 단면입니다. 뒷면을 추가하면 거래사례·시장 동향·부동산 정책이 들어가고,
+            각 블록은 위 "본문 블록"에서 고치거나 지우고 새로 추가할 수 있습니다.
           </p>
+          <template v-if="model.hasBackPage">
+            <button type="button" class="mini go" @click="editBack">뒷면 내용 편집하기 ↑</button>
+            <VField
+              label="하단 띠 전화번호 (왼쪽)"
+              :max="CL.footPhone"
+              v-model="model.footPhone"
+              hint="비워 두면 표시되지 않습니다"
+            />
+          </template>
           <button v-if="!model.hasBackPage" type="button" class="mini" @click="addBack">+ 뒷면 추가</button>
           <template v-else-if="askingId === 'back'">
             <button type="button" class="mini danger strong" @click="removeBack">정말 삭제</button>
@@ -220,6 +268,7 @@ import {
   CUSTOM_LIMITS,
   SIZE_OPTIONS,
   backPagePreset,
+  blankCase,
   createBlock,
 } from './customModel.js';
 
@@ -237,6 +286,7 @@ const side = ref('front');
 // 버튼을 눌러도 아무 일도 일어나지 않는 것처럼 보이기 때문입니다.
 const askingId = ref(null);
 const logoInput = ref(null);
+const blocksEl = ref(null);
 const overflow = reactive({ front: false, back: false });
 
 const activeBlocks = computed(() =>
@@ -278,6 +328,12 @@ function addBack() {
   props.model.backBlocks = backPagePreset();
   props.model.hasBackPage = true;
   side.value = 'back';
+}
+
+/** 뒷면 편집으로 전환하고 블록 목록이 보이도록 올려 줍니다. */
+function editBack() {
+  side.value = 'back';
+  blocksEl.value?.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
 function removeBack() {
@@ -360,6 +416,8 @@ onBeforeUnmount(() => window.removeEventListener('resize', fitScale));
 .mini:hover:not(:disabled) { border-color: #163766; }
 .mini:disabled { opacity: 0.4; cursor: not-allowed; }
 .mini.danger { color: #b4231b; }
+.mini.go { display: block; margin-bottom: 12px; background: #163766; border-color: #163766; color: #fff; }
+.pair { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 .mini.danger.strong { background: #b4231b; border-color: #b4231b; color: #fff; }
 .note.warn { color: #b4231b; margin: 7px 0 0; }
 

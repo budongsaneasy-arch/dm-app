@@ -64,6 +64,37 @@
             </div>
           </div>
 
+          <!-- 거래사례 표 -->
+          <div v-else-if="blk.type === 'cases'" class="cstm-blk cstm-box" :class="styleClass(blk)">
+            <div class="cstm-box-head">
+              <span class="sq"></span><span class="t">{{ blk.title }}</span>
+            </div>
+            <div class="cstm-cases">
+              <div class="cstm-case th">
+                <div v-for="c in CASE_COLS" :key="c.key">{{ c.label }}</div>
+              </div>
+              <div v-for="(r, i) in blk.rows" :key="i" class="cstm-case">
+                <div v-for="c in CASE_COLS" :key="c.key" :class="'c-' + c.key">{{ r[c.key] }}</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 부동산 정책 박스 -->
+          <div v-else-if="blk.type === 'policy'" class="cstm-blk cstm-box" :class="styleClass(blk)">
+            <div class="cstm-box-head">
+              <span class="sq"></span><span class="t">{{ blk.title }}</span>
+            </div>
+            <div class="cstm-policy">
+              <div v-for="(it, i) in blk.items" :key="i" class="cstm-policy-item">
+                <span class="no">{{ i + 1 }}</span>
+                <div class="tx">
+                  <b v-if="it.label">{{ it.label }}</b>
+                  <span v-if="it.text" class="desc">{{ it.text }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
           <!-- 시장 동향 박스 -->
           <div v-else-if="blk.type === 'market'" class="cstm-blk cstm-trend" :class="styleClass(blk)">
             <div class="cstm-trend-head">
@@ -87,6 +118,7 @@
 
       <!-- 하단 마감 바 -->
       <div class="cstm-foot">
+        <span v-if="!isFront && footPhone" class="tel">{{ footPhone }}</span>
         <span class="mark">{{ office.bizName }}</span>
       </div>
 
@@ -100,6 +132,7 @@
 
 <script setup>
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
+import { CASE_COLS } from './customModel.js';
 
 const props = defineProps({
   office: { type: Object, required: true },
@@ -113,6 +146,7 @@ const bodyEl = ref(null);
 const overflow = ref(false);
 
 const isFront = computed(() => props.page === 'front');
+const footPhone = computed(() => (props.model.footPhone || '').trim());
 // 헤더 우측의 직함 + 대표명. 둘 다 비우거나 표시를 끄면 줄 자체가 사라집니다.
 const repLine = computed(() =>
   [props.office.repTitle, props.office.repName].map((v) => (v || '').trim()).filter(Boolean).join(' ')

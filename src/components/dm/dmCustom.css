@@ -176,3 +176,29 @@
   /* 경고 띠는 인쇄물에 나오면 안 됩니다 */
   .dm .cstm-over { display: none !important; }
 }
+
+/* ---------- 거래사례 표 — 기본 템플릿 시세표(.tbl)와 같은 틀 ---------- */
+.dm .cstm-cases { font-size: 0.93em; }
+.dm .cstm-case { display: grid; grid-template-columns: 1.7fr 1fr 0.8fr 1.3fr 1fr; border-bottom: 1px solid #eaeff6; }
+.dm .cstm-case:last-child { border-bottom: none; }
+.dm .cstm-case > div { padding: 9px 12px; color: #41506a; word-break: keep-all; }
+.dm .cstm-case.th { background: var(--navy); }
+.dm .cstm-case.th > div { color: #fff; font-weight: 700; font-size: 12px; }
+.dm .cstm-case .c-name { font-weight: 700; color: var(--navy); }
+.dm .cstm-case .c-price { font-weight: 700; color: var(--navy2); }
+
+/* ---------- 부동산 정책 박스 — 번호 배지는 기본 템플릿 .info .no 와 같은 장치 ---------- */
+.dm .cstm-policy { padding: 14px 18px; display: flex; flex-direction: column; gap: 12px; }
+.dm .cstm-policy-item { display: flex; gap: 12px; align-items: flex-start; }
+.dm .cstm-policy-item .no {
+  flex: none; width: 22px; height: 22px; border-radius: 5px;
+  background: var(--navy); color: var(--gold-lt);
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 800; font-size: 12px; margin-top: 2px;
+}
+.dm .cstm-policy-item .tx { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+.dm .cstm-policy-item b { color: var(--navy); font-weight: 700; }
+.dm .cstm-policy-item .desc { color: #41506a; }
+
+/* ---------- 하단 띠 왼쪽 전화번호 (뒷면) ---------- */
+.dm .cstm-foot .tel { margin-right: auto; font-size: 17px; font-weight: 900; color: #fff; letter-spacing: -0.3px; }
